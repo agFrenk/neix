@@ -173,13 +173,13 @@ auto calculateDateFromString(string date){
     unsigned int d, m , y;
     char delimitador;
 
-    // Extracts the day
+    // extrae el mes
     dateStream >> m >> delimitador;
 
-    // Extracts the month
+    // extrae el dia
     dateStream >> d >> delimitador;
 
-    // Extracts the year
+    // extrae el año
     dateStream >> y;
 
     auto res = day{d}/m/y;
@@ -346,9 +346,6 @@ int main() {
     
     implicitVol = calculateAllImplicitVolatolity(data);
     historicVol = calculateAllHistoricVolatility(data);
-    // for(int i; i < data.size(); i++){
-    //     cout << data[i] << endl;
-    // }
 
     for(int i; i < data.size(); i++){
         dates.push_back(data[i].createdAt);
