@@ -173,13 +173,13 @@ auto calculateDateFromString(string date){
     unsigned int d, m , y;
     char delimitador;
 
-    // Extracts the day
+    // extrae el mes
     dateStream >> m >> delimitador;
 
-    // Extracts the month
+    // extrae el dia
     dateStream >> d >> delimitador;
 
-    // Extracts the year
+    // extrae el año
     dateStream >> y;
 
     auto res = day{d}/m/y;
@@ -188,7 +188,7 @@ auto calculateDateFromString(string date){
 }
 
 
-vector<double> calculateAllImplicitVolatolity(vector<Row> data){
+vector<double> calculateAllImpliedVolatolity(vector<Row> data){
     vector<double> res;
     // el valor expirationDate entra por dato, esta implicito en el nombre de la opcion.
     auto expirationDate = day{20}/11/2023;
@@ -211,7 +211,7 @@ vector<double> calculateAllImplicitVolatolity(vector<Row> data){
             double vol = 0;
             try{
 
-                vol = impliedVolatilityNewtonRaphson(data[i].underPrice, data[i].strike, t,  r, data[i].optionPrice);
+                vol = NewtonRaphsonBSV(data[i].underPrice, data[i].strike, t,  r, data[i].optionPrice);
                 if (vol == 0){
                     vol = BisecBSV(data[i].underPrice, data[i].strike, t,  r, data[i].optionPrice);
                 }
@@ -220,6 +220,7 @@ vector<double> calculateAllImplicitVolatolity(vector<Row> data){
                 vol = BisecBSV(data[i].underPrice, data[i].strike, t,  r, data[i].optionPrice);
             }
              if(vol < 0){
+                cout << "LA VOLATILIDAD FUE MENOR QUE 0 VOL: " << vol << endl;
                 vol = 0;
             }
             res.push_back(vol);
@@ -268,9 +269,6 @@ void plot(const std::vector<double>& y_values1, const std::vector<double>& y_val
 
     for (int i = 0; i < n_points; i++) {
         double y_value = y_values1[i];
-        if(y_value > 0.2){
-            y_value = 0.2;
-        }
         gr1->SetPoint(i, i, y_value);
         gr2->SetPoint(i, i, y_values2[i]);
     }
@@ -344,11 +342,8 @@ int main() {
     string path = "Exp_Octubre.csv";
     data = readData(path);
     
-    implicitVol = calculateAllImplicitVolatolity(data);
+    implicitVol = calculateAllImpliedVolatolity(data);
     historicVol = calculateAllHistoricVolatility(data);
-    // for(int i; i < data.size(); i++){
-    //     cout << data[i] << endl;
-    // }
 
     for(int i; i < data.size(); i++){
         dates.push_back(data[i].createdAt);
